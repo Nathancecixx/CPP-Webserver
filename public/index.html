@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShopSmart</title>
+  <link rel="stylesheet" href="/styles/index.css" />
+</head>
+<body>
+  <header>
+    <h1>Secure Kicks</h1>
+    <p>Simple. Secure. Sneakers.</p>
+  </header>
+
+  <main class="product-grid">
+    <div class="product-card" onclick="viewProduct(1)">
+      <img src="images/Chicago_One.jpg" alt="Chicago 1's (1985)">
+      <h2>Chicago 1's (1985)</h2>
+      <p>$49,000.00</p>
+    </div>
+    <div class="product-card" onclick="viewProduct(2)">
+      <img src="/images/Lobster_Dunk.jpg" alt="Lobster Dunk's">
+      <h2>Lobster Dunk's</h2>
+      <p>$392.00</p>
+    </div>
+    <div class="product-card" onclick="viewProduct(3)">
+      <img src="/images/FireRed_Fours.jpg" alt="Fire Red 4's">
+      <h2>Fire Red Jordan 4's</h2>
+      <p>$394.00</p>
+    </div>
+    <div class="product-card" onclick="viewProduct(4)">
+      <img src="/images/product4.jpg" alt="Product 4">
+      <h2>Product Four</h2>
+      <p>$39.99</p>
+    </div>
+  </main>
+
+  <footer>
+    <button onclick="goToCart()">🛒 View Cart</button>
+  </footer>
+
+  <script>
+    function viewProduct(id) {
+      window.location.href = `/product/${id}`;
+    }
+
+    function goToCart() {
+      window.location.href = "/cart";
+    }
+  </script>
+</body>
+</html>
