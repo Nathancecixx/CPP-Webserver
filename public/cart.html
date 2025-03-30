@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Cart – Secure Kicks</title>
+    <link rel="stylesheet" href="/styles/cart.css" />
+    <!-- Make sure shared.js provides loadInventory, getCart, setCartQuantity, removeFromCart, and getProductById -->
+    <script src="/scripts/shared.js" defer></script>
+    <script defer>
+        // Load the cart page by fetching inventory and cart data from the server.
+        async function loadCartPage() {
+            // Load the latest inventory from the server.
+            await loadInventory();
+            // Fetch the cart and filter out any items with a zero quantity.
+            let cartItems = await getCart();
+            cartItems = cartItems.filter(item => item.quantity > 0);
+
+            const container = document.getElementById("cart-container");
+
+            // If there are no items in the cart, show an empty message.
+            if (!cartItems || cartItems.length === 0) {
+                container.innerHTML = "<p class='empty'>🛒 Your cart is empty.</p>";
+                return;
+            }
+
+            let total = 0;
+
+            // Create a cart item element for each item in the cart.
+            cartItems.forEach(item => {
+                const product = getProductById(item.id);
+                if (!product) return; // Skip if product is not found.
+
+                const subtotal = product.price * item.quantity;
+                total += subtotal;
+
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "cart-item";
+                itemDiv.innerHTML = `
+          <img src="${product.image}" alt="${product.name}" />
+          <div class="details">
+            <h2>${product.name}</h2>
+            <p>$${product.price.toFixed(2)} × 
+              <input type="number" min="1" max="${product.stock}" value="${item.quantity}" 
+                     onchange="onQuantityChange(${item.id}, this.value)" />
+              = <strong>$${subtotal.toFixed(2)}</strong>
+            </p>
+            <button onclick="onRemoveItem(${item.id})">Remove</button>
+          </div>
+        `;
+                container.appendChild(itemDiv);
+            });
+
+            const totalDiv = document.createElement("div");
+            totalDiv.className = "total";
+            totalDiv.innerHTML = `<h3>Total: $${total.toFixed(2)}</h3>`;
+            container.appendChild(totalDiv);
+        }
+
+        // Update the quantity when the input value changes.
+        function onQuantityChange(productId, value) {
+            const qty = Math.max(1, parseInt(value));
+            setCartQuantity(productId, qty);
+            // Optionally, you could refresh the cart page to reflect updated totals:
+            // location.reload();
+        }
+
+        async function onRemoveItem(productId) {
+            const inputElem = document.getElementById(`qty-${productId}`);
+            let currentQuantity = parseInt(inputElem.value);
+            // Subtract one, but do not go below 0.
+            let newQuantity = Math.max(0, currentQuantity - 1);
+            await setCartQuantity(productId, newQuantity);
+            location.reload();
+        }
+
+        window.addEventListener("DOMContentLoaded", loadCartPage);
+    </script>
+</head>
+
+<body>
+    <header>
+        <h1>Your Cart</h1>
+        <a href="/">← Back to Store</a>
+    </header>
+
+    <main id="cart-container"></main>
+</body>
+
+</html>

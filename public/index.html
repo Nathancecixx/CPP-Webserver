@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ShopSmart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Secure Kicks</title>
   <link rel="stylesheet" href="/styles/index.css" />
 </head>
 <body>
@@ -12,41 +12,89 @@
     <p>Simple. Secure. Sneakers.</p>
   </header>
 
-  <main class="product-grid">
-    <div class="product-card" onclick="viewProduct(1)">
-      <img src="images/Chicago_One.jpg" alt="Chicago 1's (1985)">
-      <h2>Chicago 1's (1985)</h2>
-      <p>$49,000.00</p>
-    </div>
-    <div class="product-card" onclick="viewProduct(2)">
-      <img src="/images/Lobster_Dunk.jpg" alt="Lobster Dunk's">
-      <h2>Lobster Dunk's</h2>
-      <p>$392.00</p>
-    </div>
-    <div class="product-card" onclick="viewProduct(3)">
-      <img src="/images/FireRed_Fours.jpg" alt="Fire Red 4's">
-      <h2>Fire Red Jordan 4's</h2>
-      <p>$394.00</p>
-    </div>
-    <div class="product-card" onclick="viewProduct(4)">
-      <img src="/images/product4.jpg" alt="Product 4">
-      <h2>Product Four</h2>
-      <p>$39.99</p>
-    </div>
-  </main>
+  <main class="product-grid" id="productGrid"></main>
 
   <footer>
     <button onclick="goToCart()">🛒 View Cart</button>
   </footer>
 
+  <script src="/scripts/shared.js"></script>
   <script>
-    function viewProduct(id) {
-      window.location.href = `/product/${id}`;
+    const productGrid = document.getElementById("productGrid");
+
+    // Load products once the cart is fetched
+    async function loadProducts() {
+      const cart = await getCart();
+
+      await loadInventory();
+      
+      inventory.forEach(product => {
+        const quantityInCart = cart.find(item => item.id === product.id)?.quantity || 0;
+        const card = document.createElement("div");
+        card.className = "product-card";
+
+        card.innerHTML = `
+          <img src="${product.image}" alt="${product.name}">
+          <h2>${product.name}</h2>
+          <p>$${product.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+
+          <div class="quantity-control">
+            <button onclick="updateQuantity(${product.id}, -1)">−</button>
+            <input type="number" id="qty-${product.id}" min="0" max="${product.stock}" value="${quantityInCart}" onchange="setQuantity(${product.id}, this.value)">
+            <button onclick="updateQuantity(${product.id}, 1)">+</button>
+          </div>
+
+          <p id="stock-${product.id}" class="stock-label">${quantityInCart} / ${product.stock} in cart</p>
+          <button class="view-btn" onclick="viewProduct(${product.id})">👟 View Product</button>
+        `;
+
+        productGrid.appendChild(card);
+      });
     }
 
+    // Increase or decrease quantity and update the cart on the server
+    function updateQuantity(productId, change) {
+        console.log(`updateQuantity called with productId=${productId} change=${change}`);
+        const input = document.getElementById(`qty-${productId}`);
+        let qty = parseInt(input.value) + change;
+        const product = getProductById(productId);
+        qty = Math.max(0, Math.min(product.stock, qty));
+        console.log(`New quantity: ${qty}`);
+
+        input.value = qty;
+        setCartQuantity(productId, qty);
+        refreshStockLabel(productId, qty);
+    }
+
+
+    // Set the quantity directly and update the cart on the server
+    function setQuantity(productId, value) {
+      const qty = Math.max(0, Math.min(getProductById(productId).stock, parseInt(value)));
+      setCartQuantity(productId, qty);
+      refreshStockLabel(productId, qty);
+    }
+
+    // Refresh the displayed stock label for a product
+    function refreshStockLabel(productId, qty) {
+      const label = document.getElementById(`stock-${productId}`);
+      if (label) {
+        const product = getProductById(productId);
+        label.textContent = `${qty} / ${product.stock} in cart`;
+      }
+    }
+
+    // Navigate to the product details page
+    function viewProduct(id) {
+      window.location.href = `/sneaker/${id}`;
+    }
+
+    // Navigate to the cart page
     function goToCart() {
       window.location.href = "/cart";
     }
+
+    // Initialize the page by loading products
+    loadProducts();
   </script>
 </body>
 </html>
