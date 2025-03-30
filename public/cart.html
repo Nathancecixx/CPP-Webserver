@@ -54,7 +54,9 @@
 
             const totalDiv = document.createElement("div");
             totalDiv.className = "total";
-            totalDiv.innerHTML = `<h3>Total: $${total.toFixed(2)}</h3>`;
+            totalDiv.innerHTML = `
+            <h3>Total: $${total.toFixed(2)}</h3>
+            <button type="button" onclick="window.location.href='/checkout'">Checkout</button>`;
             container.appendChild(totalDiv);
         }
 

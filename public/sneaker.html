@@ -15,62 +15,40 @@
     <!-- Sneaker details will be populated here -->
   </main>
 
+  <!-- Include shared functions -->
+  <script src="/scripts/shared.js"></script>
+  
   <script>
-    // Example inventory data; in production you might fetch this from your server.
-    const inventory = [
-      {
-        id: 1,
-        name: "Chicago 1's (1985)",
-        price: 49000.00,
-        stock: 1,
-        image: "/images/Chicago_One.jpg",
-        description: "Super comfy classic sneakers with a timeless design that honors the original Chicago heritage."
-      },
-      {
-        id: 2,
-        name: "Lobster Dunk's",
-        price: 392.00,
-        stock: 2,
-        image: "/images/Lobster_Dunk.jpg",
-        description: "Sleek modern design with premium materials. Stand out with a bold, fashion-forward look."
-      },
-      {
-        id: 3,
-        name: "Fire Red Jordan 4's (2020)",
-        price: 394.00,
-        stock: 13,
-        image: "/images/FireRed_Fours.jpg",
-        description: "Turn up the heat with these fire red sneakers. Designed to deliver performance and style."
+    (async function() {
+      // Extract the sneaker ID from the URL.
+      const pathParts = window.location.pathname.split('/');
+      const sneakerId = parseInt(pathParts[pathParts.length - 1]);
+
+      // Wait for inventory to load from the backend
+      await loadInventory(); 
+      
+      // Find the sneaker in the inventory array
+      const sneaker = inventory.find(item => item.id === sneakerId);
+      const container = document.getElementById("sneaker-container");
+
+      if (sneaker) {
+        container.innerHTML = `
+          <div class="sneaker-card">
+            <div class="sneaker-image-container">
+              <img src="${sneaker.image}" alt="${sneaker.name}" class="sneaker-image">
+            </div>
+            <div class="sneaker-details">
+              <h1 class="sneaker-title">${sneaker.name}</h1>
+              <p class="sneaker-price">$${sneaker.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+              <p class="sneaker-description">${sneaker.description}</p>
+              <button class="buy-button">Buy Now</button>
+            </div>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `<p class="error">Sneaker not found.</p>`;
       }
-    ];
-
-    // Extract the sneaker ID from the URL.
-    // For example, if the URL is "/sneaker/2", the ID is 2.
-    const pathParts = window.location.pathname.split('/');
-    const sneakerId = parseInt(pathParts[pathParts.length - 1]);
-    
-    // Find the sneaker in the inventory
-    const sneaker = inventory.find(item => item.id === sneakerId);
-
-    const container = document.getElementById("sneaker-container");
-
-    if (sneaker) {
-      container.innerHTML = `
-        <div class="sneaker-card">
-          <div class="sneaker-image-container">
-            <img src="${sneaker.image}" alt="${sneaker.name}" class="sneaker-image">
-          </div>
-          <div class="sneaker-details">
-            <h1 class="sneaker-title">${sneaker.name}</h1>
-            <p class="sneaker-price">$${sneaker.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
-            <p class="sneaker-description">${sneaker.description}</p>
-            <button class="buy-button">Buy Now</button>
-          </div>
-        </div>
-      `;
-    } else {
-      container.innerHTML = `<p class="error">Sneaker not found.</p>`;
-    }
+    })();
   </script>
 </body>
 </html>

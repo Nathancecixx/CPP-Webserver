@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout – Secure Kicks</title>
+  <link rel="stylesheet" href="/styles/checkout.css" />
+</head>
+<body>
+  <header>
+    <h1>Checkout</h1>
+    <p>Payment Required: Please login to confirm your purchase.</p>
+  </header>
+  <main>
+    <form id="login-form">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required />
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required />
+
+      <button type="submit">Login & Confirm Purchase</button>
+    </form>
+  </main>
+  <script>
+    // When the form is submitted, send login info to /api/auth
+    document.getElementById("login-form").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      try {
+        const authResponse = await fetch("/api/auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        });
+        
+        if(authResponse.status === 202) {
+          // REQ6e: Popup confirmation dialog
+          alert("Purchase confirmed!");
+          // REQ6f: Request the cart receipt as plain text
+          const receiptResponse = await fetch("/api/cart/reciept", { method: "POST" });
+          const receiptText = await receiptResponse.text();
+          // Display receipt in a new window
+          const receiptWindow = window.open("", "_blank");
+          receiptWindow.document.write("<pre>" + receiptText + "</pre>");
+        } else if(authResponse.status === 401) {
+          alert("Login failed: Invalid Credentials.");
+        } else {
+          alert("Unexpected response: " + authResponse.status);
+        }
+      } catch(error) {
+        alert("Error: " + error);
+      }
+    });
+  </script>
+</body>
+</html>

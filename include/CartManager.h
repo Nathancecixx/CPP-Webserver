@@ -19,10 +19,15 @@ class CartManager {
     public:
     bool addToCart(const crow::request& req, crow::response& res);
     bool getCart(const crow::request& req, crow::json::wvalue& json);
+    std::string readCartFile(const std::string& sessionId);
+    std::string getSessionId(const crow::request& req);
 
     private:
     std::string getOrCreateSessionId(const crow::request& req, crow::response& res);
-    std::string getSessionId(const crow::request& req);
+
+    bool saveCartToFile(const std::string& sessionId);
+    bool loadCartFromFile(const std::string& sessionId);
+
 };
 
 #endif // CART_MANAGER_H

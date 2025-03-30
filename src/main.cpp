@@ -4,6 +4,7 @@
 #include "crow_all.h"
 #include "CartManager.h"
 #include "InventoryManager.h"
+#include "AuthManager.h"
 #include <iostream>
 using namespace std;
 
@@ -13,6 +14,7 @@ int main()
 	crow::SimpleApp app;
 	CartManager cartManager;
 	InventoryManager inventoryManager("../Products.json");
+	AuthManager authManager("Admin", "Admin");
 
 	CROW_ROUTE(app, "/")
 	([]() {
@@ -42,6 +44,54 @@ int main()
 		return crow::response(page);
 	});
 
+	CROW_ROUTE(app, "/checkout")
+	([]() {
+		crow::response res;
+		res.code = 402; // Payment Required
+		std::ifstream file("../public/checkout.html");
+		if(!file.is_open())
+			return crow::response(404);
+		std::stringstream buffer;
+		buffer << file.rdbuf();
+		res.write(buffer.str());
+		return res;
+	});
+
+
+
+	CROW_ROUTE(app, "/api/auth").methods("POST"_method)
+	([&](const crow::request& req) {
+		auto body = crow::json::load(req.body);
+		if (!body) return crow::response(400, "Invalid JSON");
+
+		std::string username = body["username"].s();
+    	std::string password = body["password"].s();
+
+		int accountId = authManager.verify(username, password);
+		crow::response res;
+
+		if(accountId != -1){
+			res.code = 202;
+			res.write("Login Successful!");
+		} else {
+			res.code = 401;
+			res.write("Invalid Credentials.");
+		}
+		return res;
+	});
+
+	CROW_ROUTE(app, "/api/cart/reciept").methods("POST"_method)
+	([&](const crow::request& req) {
+		std::string sessionId = cartManager.getSessionId(req);
+		if(sessionId.empty()){
+			return crow::response(400, "Session not found");
+		}
+		std::string receiptText = cartManager.readCartFile(sessionId);
+		crow::response res;
+		res.set_header("Content-Type", "text/plain");
+		res.write(receiptText);
+		return res;
+	});
 
 	CROW_ROUTE(app, "/api/cart/set").methods("POST"_method)
 	([&](const crow::request& req) {
@@ -60,7 +110,7 @@ int main()
 	});
 
 	CROW_ROUTE(app, "/api/cart").methods("GET"_method)
-	([&](const crow::request& req){
+	([&](const crow::request& req) {
 
 		crow::json::wvalue json;
 		cartManager.getCart(req, json);
@@ -69,7 +119,7 @@ int main()
 	});
 
 	CROW_ROUTE(app, "/api/inventory").methods("GET"_method)
-	([&](const crow::request& req){
+	([&](const crow::request& req) {
 
 		crow::json::wvalue json;
 		inventoryManager.getInventory(json);
@@ -79,7 +129,7 @@ int main()
 
 
 	CROW_ROUTE(app, "/styles/<path>")
-	([](const std::string& filepath){
+	([](const std::string& filepath) {
 		std::string path = "../public/styles/" + filepath;
 		std::ifstream file(path);
 		if (!file.is_open()) return crow::response(404);
@@ -94,7 +144,7 @@ int main()
 	});
 
 	CROW_ROUTE(app, "/scripts/<path>")
-	([](const std::string& filepath){
+	([](const std::string& filepath) {
 		std::string path = "../public/scripts/" + filepath;
 		std::ifstream file(path);
 		if (!file.is_open()) return crow::response(404);
@@ -110,7 +160,7 @@ int main()
 
 
 	CROW_ROUTE(app, "/images/<path>")
-	([](const std::string& filepath){
+	([](const std::string& filepath) {
 		std::string path = "../public/images/" + filepath;
 		std::ifstream file(path, std::ios::binary); // binary for images!
 		if (!file.is_open()) return crow::response(404);

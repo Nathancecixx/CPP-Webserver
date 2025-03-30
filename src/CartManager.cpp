@@ -10,6 +10,8 @@ bool CartManager::addToCart(const crow::request& req, crow::response& res){
     int productId = body["id"].i();
     int quantity = body["quantity"].i();
 
+    loadCartFromFile(sessionId);
+
     auto& cart = carts[sessionId];
 
 
@@ -26,6 +28,8 @@ bool CartManager::addToCart(const crow::request& req, crow::response& res){
 
     if(!found) 
         cart.push_back({ productId, quantity });
+
+    saveCartToFile(sessionId);
 
     return true;
 };
@@ -80,3 +84,54 @@ std::string CartManager::getOrCreateSessionId(const crow::request& req, crow::re
 
     return sessionId;
 };
+
+
+bool CartManager::saveCartToFile(const std::string& sessionId) {
+    std::string filename = "cart_" + sessionId + ".txt";
+    std::ofstream ofs(filename, std::ios::trunc);
+    if (!ofs.is_open()) {
+        std::cerr << "Error: Cannot open file " << filename << " for writing." << std::endl;
+        return false;
+    }
+    
+    const auto& cart = carts[sessionId];
+    for (const auto& item : cart) {
+        ofs << item.id << " " << item.quantity << "\n";
+    }
+    
+    ofs.close();
+    return true;
+}
+
+bool CartManager::loadCartFromFile(const std::string& sessionId) {
+    std::string filename = "cart_" + sessionId + ".txt";
+    std::ifstream ifs(filename);
+    if (!ifs.is_open()) {
+        carts[sessionId] = Cart();
+        return false;
+    }
+    
+    Cart cart;
+    int id, quantity;
+    while (ifs >> id >> quantity) {
+        cart.push_back({ id, quantity });
+    }
+    
+    ifs.close();
+    carts[sessionId] = cart;
+    return true;
+}
+
+std::string CartManager::readCartFile(const std::string& sessionId) {
+    std::string filename = "cart_" + sessionId + ".txt";
+    std::ifstream ifs(filename);
+    if (!ifs.is_open()) {
+        std::cerr << "Error: Cannot open file " << filename << " for reading." << std::endl;
+        return "";
+    }
+    
+    std::stringstream buffer;
+    buffer << ifs.rdbuf();
+    ifs.close();
+    return buffer.str();
+}
