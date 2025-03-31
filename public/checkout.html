@@ -23,36 +23,35 @@
     </form>
   </main>
   <script>
-    // When the form is submitted, send login info to /api/auth
     document.getElementById("login-form").addEventListener("submit", async function(e) {
       e.preventDefault();
       const username = document.getElementById("username").value;
       const password = document.getElementById("password").value;
+      
+      //Build a query string like ?Username=alice&Password=12345
+      const queryString = `?Username=${encodeURIComponent(username)}&Password=${encodeURIComponent(password)}`;
+    
       try {
-        const authResponse = await fetch("/api/auth", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password })
+        const authResponse = await fetch("/api/auth" + queryString, {
+          method: "POST"
         });
         
-        if(authResponse.status === 202) {
-          // REQ6e: Popup confirmation dialog
+        if (authResponse.status === 202) {
           alert("Purchase confirmed!");
-          // REQ6f: Request the cart receipt as plain text
           const receiptResponse = await fetch("/api/cart/reciept", { method: "POST" });
           const receiptText = await receiptResponse.text();
-          // Display receipt in a new window
           const receiptWindow = window.open("", "_blank");
           receiptWindow.document.write("<pre>" + receiptText + "</pre>");
-        } else if(authResponse.status === 401) {
+        } else if (authResponse.status === 401) {
           alert("Login failed: Invalid Credentials.");
         } else {
           alert("Unexpected response: " + authResponse.status);
         }
-      } catch(error) {
+    
+      } catch (error) {
         alert("Error: " + error);
       }
     });
-  </script>
+    </script>    
 </body>
 </html>

@@ -1,13 +1,11 @@
 let inventory = [];
 
-// Fetch inventory from the server's endpoint /api/inventory
 async function loadInventory() {
 try {
     const response = await fetch('/api/inventory', { method: 'GET' });
     if (!response.ok) {
     throw new Error("Failed to load inventory");
     }
-    // Assume the server returns an array of inventory items
     inventory = await response.json();
     console.log("Inventory loaded:", inventory);
 } catch (error) {
@@ -31,7 +29,7 @@ function getProductById(id) {
     })
     .then(data => {
         console.log("Cart Data:", data.cart);
-        return data.cart;  // Server return cart json
+        return data.cart;  //Server return cart json
     })
     .catch(error => {
         console.error("Error fetching cart:", error);
@@ -57,7 +55,7 @@ function getProductById(id) {
       return response.text();
     })
     .then(message => {
-      console.log(message); // "Item added to cart."
+      console.log(message); //"Item added to cart."
     })
     .catch(error => console.error("Error:", error));
   }

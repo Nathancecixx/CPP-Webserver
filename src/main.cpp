@@ -56,15 +56,20 @@ int main()
 
 	//REST api routes
 	CROW_ROUTE(app, "/api/auth").methods("POST"_method)
-	([&](const crow::request& req) {
-		auto body = crow::json::load(req.body);
-		if (!body) return crow::response(400, "Invalid JSON");
+	([&](const crow::request& req, crow::response& res) {
+		//Get the username and password
+		std::string username = req.url_params.get("Username");
+		std::string password = req.url_params.get("Password");
 
-		std::string username = body["username"].s();
-    	std::string password = body["password"].s();
+		if(username.empty() || password.empty()){
+			res.code = 400;
+			res.write("Username or Password Missing.");
+			res.end();
+			return;
+		}
 
+		//Verify the username and password with our saved accounts
 		int accountId = authManager.verify(username, password);
-		crow::response res;
 
 		if(accountId != -1){
 			res.code = 202;
@@ -73,26 +78,31 @@ int main()
 			res.code = 401;
 			res.write("Invalid Credentials.");
 		}
-		return res;
+		res.end();
+		return;
 	});
 
 	CROW_ROUTE(app, "/api/cart/reciept").methods("POST"_method)
-	([&](const crow::request& req) {
+	([&](const crow::request& req, crow::response& res) {
+		//Check if session is valid
 		std::string sessionId = cartManager.getSessionId(req);
 		if(sessionId.empty()){
-			return crow::response(400, "Session not found");
+			res.code = 400;
+			res.write("Session not found.");
+			res.end();
+			return;
 		}
+		//Get the reciept rext and send it back as a plain text file
 		std::string receiptText = cartManager.readCartFile(sessionId);
-		crow::response res;
 		res.set_header("Content-Type", "text/plain");
 		res.write(receiptText);
-		return res;
+		res.end();
+		return;
 	});
 
 	CROW_ROUTE(app, "/api/cart/set").methods("POST"_method)
-	([&](const crow::request& req) {
-		crow::response res;
-
+	([&](const crow::request& req, crow::response& res) {
+		//Send the request to cart manager
 		bool success = cartManager.addToCart(req, res);
 		if(success){
 			res.code = 200;
@@ -101,12 +111,15 @@ int main()
 			res.code = 400;
 			res.write("Couldnt Add Item to Cart.");
 		}
-		return res;
+		res.end();
+		return;
 	});
 
 	CROW_ROUTE(app, "/api/cart").methods("GET"_method)
 	([&](const crow::request& req) {
 
+		//Create a crow json object and 
+		//copy the cart into it
 		crow::json::wvalue json;
 		cartManager.getCart(req, json);
 
@@ -116,6 +129,8 @@ int main()
 	CROW_ROUTE(app, "/api/inventory").methods("GET"_method)
 	([&](const crow::request& req) {
 
+		//Create a crow json object and 
+		//copy the inventory into it
 		crow::json::wvalue json;
 		inventoryManager.getInventory(json);
 
@@ -125,7 +140,7 @@ int main()
 
 
 
-	
+
 	//Routes for css, js, and image files used by pages
 	CROW_ROUTE(app, "/styles/<path>")
 	([](const std::string& filepath) {

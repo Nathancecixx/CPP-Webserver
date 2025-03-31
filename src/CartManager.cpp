@@ -104,9 +104,6 @@ bool CartManager::saveCartToFile(const std::string& sessionId) {
         std::cerr << "Error: Cannot open file " << filename << " for writing." << std::endl;
         return false;
     }
-    
-    //Ensure cart state is correctly loaded from file
-    loadCartFromFile(sessionId);
 
     //Find cart state from memory
     const auto& cart = carts[sessionId];

@@ -13,26 +13,22 @@
   </header>
 
   <main id="sneaker-container">
-    <!-- Sneaker details will be populated here -->
   </main>
 
   <script>
     (async function() {
-      // Extract sneaker ID from URL (e.g. /sneaker/2)
+      //Extract sneaker ID from URL (e.g. /sneaker/2)
       const pathParts = window.location.pathname.split('/');
       const sneakerId = parseInt(pathParts[pathParts.length - 1]);
       
       try {
-        // Fetch the product list from the inventory API endpoint
         const response = await fetch('/api/inventory');
         if (!response.ok) {
           throw new Error('Failed to fetch inventory');
         }
         const data = await response.json();
-        // Adjust for API structure: either an array or an object with an "inventory" property
         const inventory = Array.isArray(data) ? data : (data.inventory || []);
         
-        // Find the sneaker in the inventory array
         const sneaker = inventory.find(item => item.id === sneakerId);
         const container = document.getElementById("sneaker-container");
 

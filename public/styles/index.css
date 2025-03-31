@@ -144,15 +144,12 @@ input[type="number"] {
   background-color: #3a1f90;
 }
 
-/* You can remove the footer button style if the cart button is now only in the header */
 footer {
   margin-top: 40px;
   text-align: center;
 }
 
-/* Optionally, if you want to hide the footer cart button */
 footer button {
   display: none;
 }
 
-/* Static assets styling remains unchanged */
