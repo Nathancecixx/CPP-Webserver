@@ -5,18 +5,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Secure Kicks</title>
   <link rel="stylesheet" href="/styles/index.css" />
+  <style>
+    /* Basic header styling for layout */
+    header {
+      position: relative;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    /* Container for header text */
+    .header-content {
+      /* you can style the header content as needed */
+    }
+    /* Style the cart button and position it at top-right */
+    .cart-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.5rem 1rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+  </style>
 </head>
 <body>
   <header>
-    <h1>Secure Kicks</h1>
-    <p>Simple. Secure. Sneakers.</p>
+    <div class="header-content">
+      <h1>Secure Kicks</h1>
+      <p>Simple. Secure. Sneakers.</p>
+    </div>
+    <button class="cart-btn" onclick="goToCart()">🛒 Cart</button>
   </header>
 
   <main class="product-grid" id="productGrid"></main>
-
-  <footer>
-    <button onclick="goToCart()">🛒 View Cart</button>
-  </footer>
 
   <script src="/scripts/shared.js"></script>
   <script>
@@ -65,7 +90,6 @@
         setCartQuantity(productId, qty);
         refreshStockLabel(productId, qty);
     }
-
 
     // Set the quantity directly and update the cart on the server
     function setQuantity(productId, value) {

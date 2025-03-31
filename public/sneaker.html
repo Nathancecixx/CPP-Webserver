@@ -9,44 +9,57 @@
 <body>
   <header>
     <a href="/" class="back-link">← Back to Store</a>
+    <h1>Sneaker Details</h1>
   </header>
 
   <main id="sneaker-container">
     <!-- Sneaker details will be populated here -->
   </main>
 
-  <!-- Include shared functions -->
-  <script src="/scripts/shared.js"></script>
-  
   <script>
     (async function() {
-      // Extract the sneaker ID from the URL.
+      // Extract sneaker ID from URL (e.g. /sneaker/2)
       const pathParts = window.location.pathname.split('/');
       const sneakerId = parseInt(pathParts[pathParts.length - 1]);
-
-      // Wait for inventory to load from the backend
-      await loadInventory(); 
       
-      // Find the sneaker in the inventory array
-      const sneaker = inventory.find(item => item.id === sneakerId);
-      const container = document.getElementById("sneaker-container");
+      try {
+        // Fetch the product list from the inventory API endpoint
+        const response = await fetch('/api/inventory');
+        if (!response.ok) {
+          throw new Error('Failed to fetch inventory');
+        }
+        const data = await response.json();
+        // Adjust for API structure: either an array or an object with an "inventory" property
+        const inventory = Array.isArray(data) ? data : (data.inventory || []);
+        
+        // Find the sneaker in the inventory array
+        const sneaker = inventory.find(item => item.id === sneakerId);
+        const container = document.getElementById("sneaker-container");
 
-      if (sneaker) {
-        container.innerHTML = `
-          <div class="sneaker-card">
-            <div class="sneaker-image-container">
-              <img src="${sneaker.image}" alt="${sneaker.name}" class="sneaker-image">
+        if (sneaker) {
+          container.innerHTML = `
+            <div class="sneaker-card">
+              <div class="sneaker-image-container">
+                <img src="${sneaker.image}" alt="${sneaker.name}" class="sneaker-image">
+              </div>
+              <div class="sneaker-details">
+                <h1 class="sneaker-title">${sneaker.name}</h1>
+                <p class="sneaker-model"><strong>Model:</strong> ${sneaker.model || 'N/A'}</p>
+                <p class="sneaker-price"><strong>Price:</strong> $${sneaker.price ? sneaker.price.toLocaleString(undefined, { minimumFractionDigits: 2 }) : 'N/A'}</p>
+                <p class="sneaker-retail"><strong>Retail Price:</strong> $${sneaker.retail_price ? sneaker.retail_price.toLocaleString(undefined, { minimumFractionDigits: 2 }) : 'N/A'}</p>
+                <p class="sneaker-last-sale"><strong>Last Sale:</strong> $${sneaker.last_sale ? sneaker.last_sale.toLocaleString(undefined, { minimumFractionDigits: 2 }) : 'N/A'}</p>
+                <p class="sneaker-release-date"><strong>Release Date:</strong> ${sneaker.release_date || 'N/A'}</p>
+                <p class="sneaker-description">${sneaker.description || 'No description available.'}</p>
+                <button class="buy-button">Buy Now</button>
+              </div>
             </div>
-            <div class="sneaker-details">
-              <h1 class="sneaker-title">${sneaker.name}</h1>
-              <p class="sneaker-price">$${sneaker.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
-              <p class="sneaker-description">${sneaker.description}</p>
-              <button class="buy-button">Buy Now</button>
-            </div>
-          </div>
-        `;
-      } else {
-        container.innerHTML = `<p class="error">Sneaker not found.</p>`;
+          `;
+        } else {
+          container.innerHTML = `<p class="error">Sneaker not found.</p>`;
+        }
+      } catch (error) {
+        console.error(error);
+        document.getElementById("sneaker-container").innerHTML = `<p class="error">Failed to load sneaker details.</p>`;
       }
     })();
   </script>

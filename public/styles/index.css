@@ -6,9 +6,12 @@ body {
   margin: 0;
 }
 
+/* Header now uses relative positioning for the cart button */
 header {
-  text-align: center;
+  position: relative;
+  padding: 1rem;
   margin-bottom: 30px;
+  text-align: center;
 }
 
 header h1 {
@@ -20,6 +23,25 @@ header h1 {
 header p {
   font-size: 1.2rem;
   color: #666;
+}
+
+/* New cart button style in the header (top-right corner) */
+.cart-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #4b2aad;
+  color: white;
+  padding: 8px 16px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.cart-btn:hover {
+  background-color: #3a1f90;
 }
 
 .product-grid {
@@ -60,9 +82,7 @@ header p {
   color: #4b2aad;
 }
 
-
-
-/*Get Rid of default increment and decremnet buttons*/
+/* Get rid of default increment and decrement buttons */
 /* Chrome, Safari, Edge, Opera */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
@@ -73,7 +93,6 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
-
 
 .quantity-control {
   display: flex;
@@ -125,23 +144,15 @@ input[type="number"] {
   background-color: #3a1f90;
 }
 
+/* You can remove the footer button style if the cart button is now only in the header */
 footer {
   margin-top: 40px;
   text-align: center;
 }
 
+/* Optionally, if you want to hide the footer cart button */
 footer button {
-  background-color: #4b2aad;
-  color: white;
-  padding: 12px 24px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s ease;
+  display: none;
 }
 
-footer button:hover {
-  background-color: #3a1f90;
-}
-
+/* Static assets styling remains unchanged */

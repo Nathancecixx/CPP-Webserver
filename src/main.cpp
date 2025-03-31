@@ -9,56 +9,52 @@
 using namespace std;
 
 
+crow::response serveFile(const std::string& path) {
+	//Open file to serve
+	std::ifstream file(path, std::ios::in);
+	if (!file.is_open()) {
+		return crow::response(404, "File Not Found");
+	}
+	//Copy it into a buffer
+	std::stringstream buffer;
+	buffer << file.rdbuf();
+	//Return the buffer in the body of a crow response
+	return crow::response(buffer.str());
+}
+
 int main()
 {
 	crow::SimpleApp app;
-	CartManager cartManager;
+
 	InventoryManager inventoryManager("../Products.json");
+	CartManager cartManager([&inventoryManager](int id) -> std::string {
+        return inventoryManager.getNameFromId(id);
+    });
 	AuthManager authManager("Admin", "Admin");
 
+	//Page Routes
 	CROW_ROUTE(app, "/")
 	([]() {
-		std::ifstream file("../public/index.html");
-		std::stringstream buffer;
-		buffer << file.rdbuf();
-		return buffer.str();
+		return serveFile("../public/index.html");
 	});
-
 	CROW_ROUTE(app, "/cart")
 	([]() {
-		std::ifstream file("../public/cart.html");
-		std::stringstream buffer;
-		buffer << file.rdbuf();
-		return buffer.str();
+		return serveFile("../public/cart.html");
 	});
-
 	CROW_ROUTE(app, "/sneaker/<int>")
 	([](int id) {
-		std::ifstream file("../public/sneaker.html");
-		if (!file.is_open()) {
-			return crow::response(404);
-		}
-		std::stringstream buffer;
-		buffer << file.rdbuf();
-		auto page = buffer.str();
-		return crow::response(page);
+		return serveFile("../public/sneaker.html");
 	});
-
 	CROW_ROUTE(app, "/checkout")
 	([]() {
-		crow::response res;
-		res.code = 402; // Payment Required
-		std::ifstream file("../public/checkout.html");
-		if(!file.is_open())
-			return crow::response(404);
-		std::stringstream buffer;
-		buffer << file.rdbuf();
-		res.write(buffer.str());
-		return res;
+		auto temp = serveFile("../public/checkout.html");
+		temp.code = 402; // Payment Required
+		return temp;
 	});
 
 
 
+	//REST api routes
 	CROW_ROUTE(app, "/api/auth").methods("POST"_method)
 	([&](const crow::request& req) {
 		auto body = crow::json::load(req.body);
@@ -101,12 +97,11 @@ int main()
 		if(success){
 			res.code = 200;
 			res.write("Item added to cart.");
-			return res;
 		} else {
 			res.code = 400;
 			res.write("Couldnt Add Item to Cart.");
-			return res;
 		}
+		return res;
 	});
 
 	CROW_ROUTE(app, "/api/cart").methods("GET"_method)
@@ -128,6 +123,10 @@ int main()
 	});
 
 
+
+
+	
+	//Routes for css, js, and image files used by pages
 	CROW_ROUTE(app, "/styles/<path>")
 	([](const std::string& filepath) {
 		std::string path = "../public/styles/" + filepath;

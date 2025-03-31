@@ -1,105 +1,133 @@
-/* Reset some default spacing */
+/* Reset default spacing */
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  
-  body {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    background-color: #f7f7f7;
-    color: #333;
-    line-height: 1.6;
-  }
-  
-  /* Header with a back button */
-  header {
-    background-color: #fff;
-    padding: 15px 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  
-  .back-link {
-    text-decoration: none;
-    color: #4b2aad;
-    font-size: 1rem;
-  }
-  
-  /* Main container */
-  main {
-    max-width: 900px;
-    margin: 30px auto;
-    padding: 20px;
-  }
-  
-  /* Sneaker card styling */
-  .sneaker-card {
-    background-color: #fff;
-    border-radius: 10px;
-    overflow: hidden;
-    display: flex;
-    flex-wrap: wrap;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Image container */
-  .sneaker-image-container {
-    flex: 1 1 400px;
-    max-width: 400px;
-    overflow: hidden;
-  }
-  
-  .sneaker-image {
-    width: 100%;
-    display: block;
-    object-fit: cover;
-  }
-  
-  /* Details section */
-  .sneaker-details {
-    flex: 1 1 400px;
-    padding: 25px;
-  }
-  
-  .sneaker-title {
-    font-size: 2rem;
-    margin-bottom: 10px;
-    color: #222;
-  }
-  
-  .sneaker-price {
-    font-size: 1.5rem;
-    color: #e74c3c;
-    margin-bottom: 20px;
-  }
-  
-  .sneaker-description {
-    font-size: 1rem;
-    color: #555;
-    margin-bottom: 30px;
-  }
-  
-  /* Buy button */
-  .buy-button {
-    background-color: #4b2aad;
-    color: #fff;
-    border: none;
-    padding: 12px 25px;
-    font-size: 1rem;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .buy-button:hover {
-    background-color: #3a2189;
-  }
-  
-  /* Error message styling */
-  .error {
-    text-align: center;
-    font-size: 1.2rem;
-    color: #e74c3c;
-    margin-top: 40px;
-  }
-  
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: #f7f7f7;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Header with back button */
+header {
+  background-color: #fff;
+  padding: 15px 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: relative;
+}
+
+.back-link {
+  text-decoration: none;
+  color: #4b2aad;
+  font-size: 1rem;
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+header h1 {
+  text-align: center;
+  font-size: 2rem;
+  color: #4b2aad;
+}
+
+/* Main container */
+main {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Sneaker card layout */
+.sneaker-card {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* Image container styling */
+.sneaker-image-container {
+  flex: 1 1 400px;
+  max-width: 400px;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.sneaker-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+}
+
+/* Details styling */
+.sneaker-details {
+  flex: 1 1 400px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.sneaker-title {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  color: #222;
+}
+
+.sneaker-model,
+.sneaker-retail,
+.sneaker-last-sale,
+.sneaker-release-date {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.sneaker-price {
+  font-size: 1.5rem;
+  color: #e74c3c;
+  margin-bottom: 20px;
+}
+
+.sneaker-description {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 30px;
+  line-height: 1.5;
+}
+
+/* Buy button styling */
+.buy-button {
+  background-color: #4b2aad;
+  color: #fff;
+  border: none;
+  padding: 12px 25px;
+  font-size: 1.1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  align-self: flex-start;
+}
+
+.buy-button:hover {
+  background-color: #3a2189;
+  transform: scale(1.02);
+}
+
+/* Error message styling */
+.error {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #e74c3c;
+  margin-top: 40px;
+}

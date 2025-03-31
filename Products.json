@@ -1,27 +1,51 @@
 [
     {
       "id": 1,
-      "name": "Chicago 1's (1985)",
+      "model": "Jordan 1 OG",
+      "name": "Chicago (1985)",
       "price": 49000.00,
+      "last_sale": 46952.00,
       "stock": 1,
-      "img": "/images/Chicago_One.jpg",
-      "description": "Super comfy classic sneakers."
+      "image": "/images/Chicago_One.jpg",
+      "description": "Step onto the court like a time-traveling legend—these kicks are so OG, they might just serve you a free highlight reel from the '80s!",
+      "release_date": "09/16/1985",
+      "retail_price": 65.00
     },
     {
       "id": 2,
-      "name": "Lobster Dunk's",
+      "model": "Nike SB Dunk Low",
+      "name": "Concepts Orange Lobster",
       "price": 392.00,
+      "last_sale": 1150.00,
       "stock": 2,
-      "img": "/images/Lobster_Dunk.jpg",
-      "description": "Sleek modern design."
+      "image": "/images/Lobster_Dunk.jpg",
+      "description": "Crack open your style with these Lobster Dunk kicks – they’re so fresh, even lobsters are shell-shocked and green with envy!",
+      "release_date": "12/20/2022",
+      "retail_price": 120.00
     },
     {
       "id": 3,
-      "name": "Fire Red Jordan 4's (2020)",
+      "model": "Jordan 4 Retro",
+      "name": "Fire Red (2020)",
       "price": 394.00,
+      "last_sale": 565.00,
       "stock": 13,
-      "img": "/images/FireRed_Fours.jpg",
-      "description": "Flames on your feet."
+      "image": "/images/FireRed_Fours.jpg",
+      "description": "Ignite your look with these Fire Red sneakers – so hot, they’re practically on fire (fire extinguisher not included)!",
+      "release_date": "11/28/2020",
+      "retail_price": 200.00
+    },
+    {
+      "id": 4,
+      "model": "Jordan 1 Retro High",
+      "name": "J Balvin",
+      "price": 480.00,
+      "last_sale": 684,
+      "stock": 5,
+      "image": "/images/JBalvin_One.jpg",
+      "description": "Bring the party to your feet with these kicks – as vibrant as a J Balvin beat, they’ll have you dancing in style all day long!",
+      "release_date": "12/08/2020",
+      "retail_price": 190
     }
   ]
   
